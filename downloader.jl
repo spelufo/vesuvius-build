@@ -1,7 +1,7 @@
 # Download data for https://scrollprize.org
 # It is hosted at http://dl.ash2txt.org
 
-using Downloads
+using Downloads, Base64
 using Printf, Images, FileIO
 
 # include("data.jl")
@@ -9,7 +9,7 @@ using Printf, Images, FileIO
 
 download_file_to_out(path, out) = begin
   url = "$DATA_URL/$path"
-  auth = ENV["VESUVIUS_SERVER_AUTH"]
+  auth = base64encode(ENV["VESUVIUS_SERVER_AUTH"])
   Downloads.download(url, out, headers=["Authorization" => "Basic $auth"])
 end
 
