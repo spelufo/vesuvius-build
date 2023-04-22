@@ -24,7 +24,6 @@ for each one `cell_yxz_YYY_XXX_ZZZ.tif`.
 
 A 1/10 in each dimension version of the data.
 
-After this are built, out of these
 
 ## Directory structure
 
