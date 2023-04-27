@@ -1,3 +1,5 @@
+UPDATE: This scripts were used to generate the chunks on the data server and are being hosted there. You might not need to run this yourself.
+
 # vesuvius-build
 
 Scripts to build files for progressive loading of the data from the
@@ -19,6 +21,10 @@ Once loaded into julia it is indexed as `vol[iy, ix, iz]`.
 
 Splits the scanned volume into cells of 500x500x500 voxels. A file is produced
 for each one `cell_yxz_YYY_XXX_ZZZ.tif`.
+
+### Masks
+
+Lots of cells in the grid don't have relevant data. Less than 50% for scroll_1_54. To avoid downloading cells without data, we can use a simple mask specifying those cell coordinates with data. I've compiled such a mask for scroll_1_54, in `masks/scroll_1_54_mask.csv`.
 
 ## The "small"
 
