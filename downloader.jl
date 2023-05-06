@@ -24,7 +24,7 @@ end
 download_file(path) = begin
   out = "$DATA_DIR/$path"
   if !isfile(out)
-    dowload_file_to_out(path, out)
+    download_file_to_out(path, out)
   end
 end
 
@@ -43,6 +43,13 @@ download_grid_layer(scan::HerculaneumScan, jz::Int) = begin
   layers = 1:ceil(Int, scan.slices / GRID_SIZE)
   @assert jz in layers "lz out of bounds"
   download_scan_slices(scan, grid_cell_range(jz, scan.slices))
+end
+
+download_grid_cells_range(scan::HerculaneumScan, jys, jxs, jzs; quiet=false) = begin
+  for jy in jys, jx in jxs, jz in jzs
+    quiet || println("Downloading $filename...")
+    download_file(grid_cell_server_path(scan, jy, jx, jz))
+  end
 end
 
 # Needs lots of disk space, ballpark about 300GB. It will also take a long time.

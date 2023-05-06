@@ -33,7 +33,9 @@ load_grid_cells_from_slices!(cells::Array{Gray{N0f16}, 5}, scan::HerculaneumScan
   izs = grid_cell_range(jz, scan.slices)
   black = Gray{N0f16}(0)
   for (cell_iz, iz) in enumerate(izs)
-    slice = TiffImages.load(scan_slice_path(scan, iz); mmap=true)
+    slice_path = scan_slice_path(scan, iz)
+    println("iz: $iz")
+    slice = TiffImages.load(slice_path; mmap=true)
     for jy in jys, jx in jxs
       iys = grid_cell_range(jy, scan.height)
       ixs = grid_cell_range(jx, scan.width)
@@ -48,12 +50,13 @@ end
 build_grid_layer(scan::HerculaneumScan, jz::Int) = begin
   Base.GC.gc()
   println("GC done.")
-  cells = Array{Gray{N0f16}}(undef, (GRID_SIZE, GRID_SIZE, GRID_SIZE, 4, 4))
+  sy, sx = 4, 4
+  cells = Array{Gray{N0f16}}(undef, (GRID_SIZE, GRID_SIZE, GRID_SIZE, sy, sx))
   println("Cells allocated.")
   cy, cx, cz = grid_size(scan)
-  for jy in 1:4:cy
-    for jx in 1:4:cx
-      by, bx = jy:min(jy+3, cy), jx:min(jx+3, cx)
+  for jy in 1:sy:cy
+    for jx in 1:sx:cx
+      by, bx = jy:min(jy+sy-1, cy), jx:min(jx+sx-1, cx)
       if have_grid_cells(scan, by, bx, jz)
         println("skipping built cells: ($by, $bx)")
       else

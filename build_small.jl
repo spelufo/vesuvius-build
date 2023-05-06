@@ -30,7 +30,7 @@ build_small_slice_from_server(scan::HerculaneumScan, iz::Int) = begin
   save_small_slice(scan, slice, iz)
 end
 
-build_small_range(scan::HerculaneumScan, izbounds::UnitRange{Int}, from=:disk) = begin
+build_small_range(scan::HerculaneumScan, izbounds::UnitRange{Int}; from=:disk) = begin
   mkpath(dirname(small_slice_path(scan, 1)))
   izs = intersect(1:SMALLER_BY:scan.slices, izbounds)
   for (i, iz) in enumerate(izs)
@@ -39,7 +39,6 @@ build_small_range(scan::HerculaneumScan, izbounds::UnitRange{Int}, from=:disk) =
       # Base.GC.gc() # Did this on scroll 1. Probably a bad idea, faster not to.
     end
     if from == :disk
-      @assert false "not here!"
       build_small_slice_from_disk(scan, iz)
     else
       build_small_slice_from_server(scan, iz)
@@ -47,11 +46,11 @@ build_small_range(scan::HerculaneumScan, izbounds::UnitRange{Int}, from=:disk) =
   end
 end
 
-build_small_layer(scan::HerculaneumScan, jz::Int, from=:disk) =
-  build_small_range(scan, grid_cell_range(jz, scan.slices), from)
+build_small_layer(scan::HerculaneumScan, jz::Int; from=:disk) =
+  build_small_range(scan, grid_cell_range(jz, scan.slices), from=from)
 
-build_small(scan::HerculaneumScan, from=:server) =
-  build_small_range(scan, 1:scan.slices, from)
+build_small(scan::HerculaneumScan; from=:server) =
+  build_small_range(scan, 1:scan.slices, from=from)
 
 # Builds small.tif out of the small slice files.
 build_small_volume(scan::HerculaneumScan) = begin

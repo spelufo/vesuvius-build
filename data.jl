@@ -1,4 +1,6 @@
+using LinearAlgebra, StaticArrays, GeometryBasics, Quaternions
 using Images, TiffImages
+
 
 # Source data ##################################################################
 
@@ -7,7 +9,7 @@ const DATA_DIR = "$(dirname(@__DIR__))/data"
 
 struct HerculaneumScan
   path :: String
-  resolution :: Float32
+  resolution_um :: Float32
   xray_energy_KeV :: Float32
   width::Int
   height::Int
@@ -41,10 +43,15 @@ end
 @inline scan_slice_url(scan::HerculaneumScan, iz::Int)::String =
   "$DATA_URL/$(scan_slice_server_path(scan, iz))"
 
+@inline scan_dimensions_mm(scan::HerculaneumScan) =
+  scan.resolution_um * Vec3f(scan.width, scan.height, scan.slices) / 1000f0
+
+@inline scan_position_mm(scan::HerculaneumScan, iy::Int, ix::Int, iz::Int) =
+  scan.resolution_um * Vec3f(ix-1, iy-1, iz-1) / 1000f0
 
 # Grid #########################################################################
 
-const GRID_DIR = "$(dirname(@__DIR__))/data_grids"
+const GRID_DIR = DATA_DIR
 const GRID_SIZE = 500  # The size of each cell.
 
 # The size of the grid, in number of cells.
@@ -53,19 +60,29 @@ const GRID_SIZE = 500  # The size of each cell.
     ceil(Int, scan.width / GRID_SIZE),
     ceil(Int, scan.slices / GRID_SIZE) )
 
+@inline grid_size(scan::HerculaneumScan, dim::Int) =
+  grid_size(scan)[dim]
+
 @inline grid_cell_range(j::Int, max::Int) =
   GRID_SIZE*(j - 1) + 1 : min(GRID_SIZE*j, max)
 
 @inline grid_cell_filename(scan::HerculaneumScan, jy::Int, jx::Int, jz::Int)::String =
   "cell_yxz_$(zpad(jy, 3))_$(zpad(jx, 3))_$(zpad(jz, 3)).tif"
 
-@inline grid_cell_path(scan::HerculaneumScan, jy::Int, jx::Int, jz::Int)::String =
-  "$GRID_DIR/$(scan.path)/$(grid_cell_filename(scan, jy, jx, jz))"
+@inline grid_cell_server_path(scan::HerculaneumScan, jy::Int, jx::Int, jz::Int)::String = begin
+  path = replace(scan.path, "/volumes/" => "/volume_grids/")
+  "$path/$(grid_cell_filename(scan, jy, jx, jz))"
+end
 
+@inline grid_cell_path(scan::HerculaneumScan, jy::Int, jx::Int, jz::Int)::String =
+  "$GRID_DIR/$(grid_cell_server_path(scan, jy, jx, jz))"
+
+have_grid_cell(scan::HerculaneumScan, jy::Int, jx::Int, jz::Int) =
+  isfile(grid_cell_path(scan, jy, jx, jz))
 
 have_grid_cells(scan::HerculaneumScan, jys::UnitRange{Int}, jxs::UnitRange{Int}, jz::Int) = begin
   for jy in jys, jx in jxs
-    isfile(grid_cell_path(scan, jy, jx, jz)) || return false
+    have_grid_cell(scan, jy, jx, jz) || return false
   end
   true
 end
@@ -91,5 +108,5 @@ const SMALLER_BY = 10
   "$SMALL_DIR/$(scan.path)_small.tif"
 
 
-load_small_volume(scan::HerculaneumScan) =
-  TiffImages.load(small_volume_path(scan))
+load_small_volume(scan::HerculaneumScan; mmap=true) =
+  TiffImages.load(small_volume_path(scan); mmap=mmap)
