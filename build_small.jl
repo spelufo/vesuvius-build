@@ -49,10 +49,25 @@ end
 build_small_layer(scan::HerculaneumScan, jz::Int; from=:disk) =
   build_small_range(scan, grid_cell_range(jz, scan.slices), from=from)
 
+"""
+    build_small(scan::HerculaneumScan; from=:server)
+
+Builds the downsampled slice files for the "small" dataset. The `from` argument
+can be `:server` or `:disk`. Building from disk uses the full resolution slices
+on your DATA_DIR. Building from the server loads them from the server into
+memory, so as not to require as much disk space.
+"""
 build_small(scan::HerculaneumScan; from=:server) =
   build_small_range(scan, 1:scan.slices, from=from)
 
-# Builds small.tif out of the small slice files.
+"""
+    build_small_volume(scan::HerculaneumScan)
+
+Builds the `<SCAN>_small.tif` 3D tif file containing the "small" dataset: A low
+resolution version of the scroll saved as a 3D tif file.
+
+You must first run `build_small` to build the files this uses as input.
+"""
 build_small_volume(scan::HerculaneumScan) = begin
   vol = Array{Gray{N0f16}}(undef, small_size(scan))
   for (i, iz) in enumerate(1:SMALLER_BY:scan.slices)

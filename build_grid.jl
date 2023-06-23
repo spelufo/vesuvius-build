@@ -47,6 +47,12 @@ load_grid_cells_from_slices!(cells::Array{Gray{N0f16}, 5}, scan::HerculaneumScan
   nothing
 end
 
+"""
+    build_grid_layer(scan::HerculaneumScan, jz::Int)
+
+Build a layer of the grid. Requires all slices from that layer on your DATA_DIR.
+This takes a long time and requires a lot of memory and disk space.
+"""
 build_grid_layer(scan::HerculaneumScan, jz::Int) = begin
   Base.GC.gc()
   println("GC done.")
@@ -67,4 +73,27 @@ build_grid_layer(scan::HerculaneumScan, jz::Int) = begin
     end
   end
   nothing
+end
+
+"""
+    build_grid(scan::HerculaneumScan)
+
+Builds all the grid files for a scroll. Don't run this, use `build_grid_layer`
+to build only the layers you need, or better yet, download the grid cell files
+from the data server.
+
+This takes a long time and requires a lot of memory and disk space (~4TB/scroll).
+We did this on the data server so you don't have to. It took about a day to run.
+
+If you are sure that you still want to run it, comment out the @assert. Also,
+you might want to tune the `sx` and `sy` variables in `build_grid_layer` to use
+as much RAM as you can spend on the job, which will speed it up.
+"""
+build_grid(scan::HerculaneumScan) = begin
+  @assert false "See ?build_grid. Are you sure you want to run this?"
+  _, _, jzs = grid_size(scroll_1_54)
+  for jz in 1:jzs
+    build_grid_layer(scroll_1_54, jz)
+    println("Layer $jz done")
+  end
 end
