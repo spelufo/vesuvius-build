@@ -21,7 +21,7 @@ top_pipeline(cell_jy::Int, cell_jx::Int, cell_jz::Int) = begin
   raw_tif_file = "$CELLS_DIR/$cell_name.tif"
   if !isfile(raw_tif_file)
     println("File not found: $raw_tif_file")
-    println("You may need to download it from the server"
+    println("You may need to download it from the server")
     println("or symlink ../data to a local directory that mirrors the server's files.")
     return
   end
