@@ -1,4 +1,4 @@
-using LinearAlgebra, GeometryBasics, MarchingCubes, GLMakie, FileIO, MeshIO, HDF5, Statistics, Graphs, SimpleWeightedGraphs
+using LinearAlgebra, GeometryBasics, MarchingCubes, FileIO, MeshIO, HDF5
 
 
 mesh_and_save_hole!(M::Array{UInt32, 3}, i::UInt32, pos::Point3f, filename::String) = begin

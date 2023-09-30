@@ -18,14 +18,19 @@ top_pipeline(cell_jy::Int, cell_jx::Int, cell_jz::Int) = begin
   isdir(cell_dir) || mkdir(cell_dir)
 
   # 1. Download from volume_grids.   `*.tif`                  ( 250M)
-  # I already did this manually, using download_grid_cells_range. TODO.
-
+  raw_tif_file = "$CELLS_DIR/$cell_name.tif"
+  if !isfile(raw_tif_file)
+    println("File not found: $raw_tif_file")
+    println("You may need to download it from the server"
+    println("or symlink ../data to a local directory that mirrors the server's files.")
+    return
+  end
 
   # 2. Convert to h5 for ilastik.    `*.h5`                   ( 250M) (  20s)
   raw_h5_file = "$cell_dir/$cell_name.h5"
   @time if !isfile(raw_h5_file)
     println("Converting tif to h5...")
-    cell_to_h5("$CELLS_DIR/$cell_name.tif", raw_h5_file)
+    cell_to_h5(raw_tif_file, raw_h5_file)
   end
 
   # 3. Ilastik pixel classification. `*_probabilities.h5`     (1000M) ( 180s)
