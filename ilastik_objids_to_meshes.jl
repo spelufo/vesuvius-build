@@ -40,3 +40,8 @@ hole_ids_to_meshes(hole_ids_file::String, file_prefix::String, pos::Point3f) = b
     mesh_and_save_hole!(M, UInt32(id), pos, "$(file_prefix)$(id).stl")
   end
 end
+
+hole_ids_to_meshes(hole_ids_file::String, file_prefix::String, jy::Int, jx::Int, jz::Int) = begin
+  cell_pos = Point3f(500f0 * (jx-1), 500f0 * (jy-1), 500f0 * (jz-1))
+  hole_ids_to_meshes(hole_ids_file, file_prefix, cell_pos)
+end

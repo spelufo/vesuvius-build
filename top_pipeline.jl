@@ -70,8 +70,7 @@ top_pipeline(cell_jy::Int, cell_jx::Int, cell_jz::Int) = begin
   @time if !isdir(hole_dir)
     println("Building hole meshes...")
     mkdir(hole_dir)
-    cell_pos = Point3f(500f0 * (cell_jx-1), 500f0 * (cell_jy-1), 500f0 * (cell_jz-1))
-    hole_ids_to_meshes(hole_ids_file, "$hole_dir/$(cell_name)_hole_", cell_pos)
+    hole_ids_to_meshes(hole_ids_file, "$hole_dir/$(cell_name)_hole_", cell_jy, cell_jx, cell_jz)
   end
 
   # 6. Cleanup intermediate files.
