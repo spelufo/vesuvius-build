@@ -19,17 +19,20 @@ adjust the parameters or try something else move on to the next section.
 $ git clone https://github.com/spelufo/vesuvius-build.git
 
 # The data directory that mirrors the folder structure on the server must be a
-# sibling to vesuvius build, so we set that up before `cd vesuvius-build`.
-
-#
-$ mkdir -p data/full-scrolls/Scroll1.volpkg/volume_grids/20230205180739
-
-# Download cells from the server, e.g.: cell_yxz_006_008_004.tif
+# sibling to vesuvius-build, so we set that up before `cd vesuvius-build`.
 
 # If you have downloaded the data from the server somewhere else you can symlink to it.
 $ ln -s path/to/data
 
+# Otherwise create the directory for the cells.
+$ mkdir -p data/full-scrolls/Scroll1.volpkg/volume_grids/20230205180739
+
+# Download cells from the server, e.g.: cell_yxz_006_008_004.tif
+
 $ cd vesuvius-build
+
+# Create the target directory, where results will go.
+$ mkdir ../data/segmentation
 
 $ julia
 
@@ -107,10 +110,17 @@ The steps are as follows:
 
 2. Run [ilastic pixel classification](https://www.ilastik.org/documentation/pixelclassification/pixelclassification)
    to separate papyrus from background. Use `cell_yxz_006_008_004.h5` as input.
+   Select all the features for classification.
+   Call the blue class (1) "bg" for background and the yellow class (2) "scroll".
 
 3. Run [ilastic object segmentation](https://www.ilastik.org/documentation/objects/objects)
    on the result of pixel classification. Use `cell_yxz_006_008_004.h5` and the
-   output probabilities from the previous step as inputs.
+   output probabilities from the previous step as inputs. Use the following parameters
+   as a starting point. You may want to adjust "smooth" and "threshold". A non-isotropic smoothness
+   like in the example may produce better results for a given scroll sheet orientation, but if
+   this project's parameters are latter used on other cells it might produce suboptimal results
+   (I made this mistake with the example results above).
+   ![Ilastik segmentation params](ilastik_segmentation_params.png)
    This ilastik workflow also does object classification, but we only care about
    the part that does segmentation and generates "object identities". Select any
    features to proceed to the export step and change the export settings to
