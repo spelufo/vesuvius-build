@@ -33,12 +33,18 @@ top_pipeline(cell_jy::Int, cell_jx::Int, cell_jz::Int) = begin
     cell_to_h5(raw_tif_file, raw_h5_file)
   end
 
+  # Ilastik binary is in /opt/ilastik or somewhere in the PATH.
+  run_ilastik = "/opt/ilastik/run_ilastik.sh"
+  if !isfile(run_ilastik)
+    run_ilastik = "run_ilastik.sh"
+  end
+
   # 3. Ilastik pixel classification. `*_probabilities.h5`     (1000M) ( 180s)
   probabilities_file = "$cell_dir/$(cell_name)_probabilities.h5"
   @time if !isfile(probabilities_file)
     println("Running ilastik pixel classification...")
     run(pipeline(
-      `/opt/ilastik/run_ilastik.sh --project ./ilastik/Vesuvius.ilp
+      `$run_ilastik --project ./ilastik/Vesuvius.ilp
       --headless --readonly
       --export_source Probabilities
       --output_filename_format $probabilities_file
@@ -54,7 +60,7 @@ top_pipeline(cell_jy::Int, cell_jx::Int, cell_jz::Int) = begin
   @time if !isfile(hole_ids_file)
     println("Running ilastik segmentation...")
     run(pipeline(
-      `/opt/ilastik/run_ilastik.sh --project ./ilastik/Vesuvius_seg3.ilp
+      `$run_ilastik --project ./ilastik/Vesuvius_seg3.ilp
       --headless --readonly
       --export_source 'Object Identities'
       --output_filename_format $hole_ids_file
