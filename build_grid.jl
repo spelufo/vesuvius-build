@@ -91,9 +91,9 @@ as much RAM as you can spend on the job, which will speed it up.
 """
 build_grid(scan::HerculaneumScan) = begin
   @assert false "See ?build_grid. Are you sure you want to run this?"
-  _, _, jzs = grid_size(scroll_1_54)
+  _, _, jzs = grid_size(scan)
   for jz in 1:jzs
-    build_grid_layer(scroll_1_54, jz)
+    build_grid_layer(scan, jz)
     println("Layer $jz done")
   end
 end
