@@ -22,6 +22,8 @@ const scroll_2_88 = HerculaneumScan("full-scrolls/Scroll2.volpkg/volumes/2023021
 
 const pherc_0332_53 = HerculaneumScan("full-scrolls/PHerc0332.volpkg/volumes/20231027191953", 3.24f0, 53f0, 9414, 9414, 22941)
 const pherc_1667_88 = HerculaneumScan("full-scrolls/PHerc1667.volpkg/volumes/20231107190228", 3.24f0, 88f0, 8120, 7960, 26391)
+const pherc_0332_53_791 = HerculaneumScan("full-scrolls/PHerc0332.volpkg/volumes/20231117143551", 7.91f0, 53f0, 3400, 3550, 9778)
+const pherc_1667_88_791 = HerculaneumScan("full-scrolls/PHerc1667.volpkg/volumes/20231117161658", 7.91f0, 53f0, 3440, 3340, 11174)
 
 const fragment_1_54 = HerculaneumScan("fragments/Frag1.volpkg/volumes/20230205142449", 3.24f0, 54f0, 7198, 1399, 7219)
 const fragment_1_88 = HerculaneumScan("fragments/Frag1.volpkg/volumes/20230213100222", 3.24f0, 88f0, 7332, 1608, 7229)
